@@ -19,8 +19,7 @@ func Init() {
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
 	}))
-    
-    
+        
     /*Server.GET("/users", func(c echo.Context) error{
     //dO something here
       return c.String(http.StatusOK, "OK")

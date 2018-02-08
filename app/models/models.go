@@ -1,7 +1,7 @@
 package models
 
 import (
-       "github.com/jinzhu/gorm"
+       //"github.com/jinzhu/gorm"
        "time"
 )
 
@@ -24,16 +24,16 @@ import (
 
 
 type User struct {
-    gorm.Model
-    id          int       `gorm:"AUTO_INCREMENT;primary_key;column:id"`
-    fname       string    `gorm:"size:30;column:fname"`
-    lname       string    `gorm:"size:30;column:lname"`
-    email       string    `gorm:"size:30;column:email"`
-    password    string    `gorm:"size:30;column:password_salt"`
-    authcode    string    `gorm:"size:30;column:authcode"`
-    phone       string    `gorm:"size:15;column:phone"`
-    created_dt  time.Time `gorm:"column:created_dt"`
-    status      int       `gorm:"column:status"`
+    //gorm.Model
+    Id          int       `gorm:"AUTO_INCREMENT;primary_key;column:id"`
+    Fname       string    `gorm:"size:30;column:fname"`
+    Lname       string    `gorm:"size:30;column:lname"`
+    Email       string    `gorm:"size:30;column:email"`
+    Password    string    `gorm:"size:30;column:password_salt"`
+    Authcode    string    `gorm:"size:30;column:authcode"`
+    Phone       string    `gorm:"size:15;column:phone"`
+    Created_dt  time.Time `gorm:"column:created_dt"`
+    Status      int       `gorm:"column:status"`
 }
  
 /*

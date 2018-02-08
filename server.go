@@ -16,6 +16,7 @@ func main() {
     
     //init controllers
     controllers.Init()
+    
     // run server
     app.Server.Logger.Fatal(app.Server.Start(":1323"))
 }
