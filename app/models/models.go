@@ -1,5 +1,8 @@
+package models
+
 import (
-      "github.com/jinzhu/gorm"
+       "github.com/jinzhu/gorm"
+       "time"
 )
 
 /*
@@ -33,7 +36,15 @@ type User struct {
     status      int       `gorm:"column:status"`
 }
  
- /*
+/*
+get_users := func(c echo.Context) error {
+             var user []User
+             res := getGormDB().Find(&user)
+             fmt.Println(res)
+	         return c.String(http.StatusOK, "OK")
+}
+
+
     Birthday     time.Time
     Age          int
     Name         string  `gorm:"size:255"` // Default size for string is 255, reset it with this tag
@@ -52,10 +63,4 @@ type User struct {
     Languages         []Language `gorm:"many2many:user_languages;"` // Many-To-Many relationship, 'user_languages' is join table
     
  */
-
-
-
-
-
-
 
