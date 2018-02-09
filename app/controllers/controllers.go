@@ -2,14 +2,14 @@ package controllers
 
 import (
     "fmt"
-    "time"
+    //"time"
     "net/http"
    _"github.com/jinzhu/gorm/dialects/mysql"
     "github.com/labstack/echo"
    	"uktrav_echo/app"
    	"github.com/jinzhu/gorm"
 	//cgorm "uktrav_echo/db/gorm"
-    //"uktrav_echo/app/models"
+    "uktrav_echo/app/models"
     
 )
 
@@ -25,7 +25,7 @@ func initDB(){
     
 }
 
-*/
+
 
 type User struct {
     Id           int       `gorm:"AUTO_INCREMENT;primary_key;column:id"`
@@ -39,6 +39,10 @@ type User struct {
     Status       int       `gorm:"column:status"`
 }
 
+*/
+
+
+type H map[string]interface{}
 
 func Init() {
       var DB *gorm.DB
@@ -47,18 +51,25 @@ func Init() {
             fmt.Println("DB not Connected")       
           }
       //defer DB.Close()
-           
-      app.Server.GET("/users", func(c echo.Context) error {
-            var user User
+      
+      app.Server.GET("/users",get_last_user(DB))
+}
+
+
+func get_last_user(db *gorm.DB) echo.HandlerFunc {
+
+    return func(c echo.Context) error {
+            var user models.User
             //obj := DB.First(&user,1)
             //fmt.Println(DB.HasTable(&User{}))
-            DB.Last(&user)
+            db.Last(&user)
             fmt.Println(user.Fname)
-            //fmt.Println(obj.Error)
             //defer DB.Close()
-	        return c.String(http.StatusOK, "OK")
-        })
+	        return c.JSON(http.StatusCreated, H{"id" : user.Id})
+      }
+
 }
+
 
 
 
