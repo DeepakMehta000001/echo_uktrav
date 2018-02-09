@@ -21,8 +21,8 @@ func Init() {
           }   
       //Routes
       
-      //GET
-      app.Server.GET("/users",get_last_user(DB))
+      //GET all records
+      app.Server.GET("/users",get_users(DB))
       
       //POST
       
@@ -30,15 +30,12 @@ func Init() {
 }
 
 
-func get_last_user(db *gorm.DB) echo.HandlerFunc {
+func get_users(db *gorm.DB) echo.HandlerFunc {
 
     return func(c echo.Context) error {
-            var user models.User
-            db.Last(&user)
-            fmt.Println(user.Fname)
-	        return c.JSON(http.StatusCreated, 
-	        H{"id" : user.Id,
-	        })
+            users :=  []models.User{}
+            db.Find(&users)
+	        return c.JSON(http.StatusOK,users)
       }
 
 }
