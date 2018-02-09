@@ -29,7 +29,7 @@ func Init() {
       app.Server.GET("/users/:id",get_user(DB))
       
       //POST
-      
+      app.Server.POST("/users",create_user(DB))
       
 }
 
@@ -60,6 +60,22 @@ func get_user(db *gorm.DB) echo.HandlerFunc {
 
 }
 
+
+func create_user(db *gorm.DB) echo.HandlerFunc {
+
+    return func(c echo.Context) error {
+                user := models.User{}
+	            if err := c.Bind(&user); err != nil {
+		            return err
+	            }
+	            db.Create(&user)
+	            if !db.NewRecord(user){
+	                fmt.Println("new record created")
+	            }
+	       return c.JSON(http.StatusCreated, user)
+      }
+
+}
 
 
 
