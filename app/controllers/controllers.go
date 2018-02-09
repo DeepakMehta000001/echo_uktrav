@@ -3,6 +3,7 @@ package controllers
 import (
     "fmt"
     "net/http"
+    "strconv"
    _"github.com/jinzhu/gorm/dialects/mysql"
     "github.com/labstack/echo"
    	"uktrav_echo/app"
@@ -24,6 +25,9 @@ func Init() {
       //GET all records
       app.Server.GET("/users",get_users(DB))
       
+      //GET record by id param
+      app.Server.GET("/users/:id",get_user(DB))
+      
       //POST
       
       
@@ -34,8 +38,24 @@ func get_users(db *gorm.DB) echo.HandlerFunc {
 
     return func(c echo.Context) error {
             users :=  []models.User{}
-            db.Find(&users)
+            if db.Find(&users).RecordNotFound(){
+                return c.JSON(http.StatusOK,"No Record Found") 
+            }
 	        return c.JSON(http.StatusOK,users)
+      }
+
+}
+
+func get_user(db *gorm.DB) echo.HandlerFunc {
+
+    return func(c echo.Context) error {
+            id, _ := strconv.Atoi(c.Param("id"))
+            var user models.User
+            if db.First(&user,id).RecordNotFound(){
+                return c.JSON(http.StatusOK,"No Record Found")    
+            }
+	        fmt.Println(user)
+	        return c.JSON(http.StatusOK,user)
       }
 
 }
