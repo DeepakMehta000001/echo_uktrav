@@ -19,7 +19,14 @@ func Init() {
 	  if err!=nil {
             fmt.Println("DB not Connected")       
           }   
+      //Routes
+      
+      //GET
       app.Server.GET("/users",get_last_user(DB))
+      
+      //POST
+      
+      
 }
 
 
