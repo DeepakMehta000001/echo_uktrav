@@ -34,6 +34,9 @@ func Init() {
       //PUT Update a user
       app.Server.PUT("/users/:id",update_user(DB))
       
+      //Delete delete a user
+      app.Server.DELETE("/users/:id",delete_user(DB))
+      
 }
 
 
@@ -102,3 +105,19 @@ func update_user(db *gorm.DB) echo.HandlerFunc {
 	        return c.JSON(http.StatusOK,user)
     }
 }
+
+
+
+func delete_user(db *gorm.DB) echo.HandlerFunc {
+    return func(c echo.Context) error {
+	            id, _ := strconv.Atoi(c.Param("id"))
+	            var user models.User
+	            db.First(&user,id)
+	            db.Delete(&user)
+	        return c.JSON(http.StatusOK,"Record Deleted")
+    }
+}
+
+
+
+
