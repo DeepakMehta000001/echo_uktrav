@@ -83,16 +83,22 @@ func create_user(db *gorm.DB) echo.HandlerFunc {
 
 func update_user(db *gorm.DB) echo.HandlerFunc {
     return func(c echo.Context) error {
-	            user_temp := echo.Map{}
+	            user_temp := H{}
 	            //user := models.User{}
 	            if err := c.Bind(&user_temp); err != nil {
 		            return err
 	            }
 	            id, _ := strconv.Atoi(c.Param("id"))
+	            
 	            var user models.User
 	            db.First(&user,id)
-	            user.Lname = user_temp["lname"].(string)
+	            
+	            if Lname, ok := user_temp["lname"].(string); ok{
+	                user.Lname = Lname
+	            }
+	            Status := int(user_temp["status"].(float64))
+	            user.Status = Status
 	            db.Save(&user)
-	        return c.JSON(http.StatusOK, user)
+	        return c.JSON(http.StatusOK,user)
     }
 }
