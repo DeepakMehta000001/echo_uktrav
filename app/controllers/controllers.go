@@ -28,8 +28,11 @@ func Init() {
       //GET record by id param
       app.Server.GET("/users/:id",get_user(DB))
       
-      //POST
+      //POST Create a new user
       app.Server.POST("/users",create_user(DB))
+      
+      //PUT Update a user
+      app.Server.PUT("/users/:id",update_user(DB))
       
 }
 
@@ -54,7 +57,7 @@ func get_user(db *gorm.DB) echo.HandlerFunc {
             if db.First(&user,id).RecordNotFound(){
                 return c.JSON(http.StatusOK,"No Record Found")    
             }
-	        fmt.Println(user)
+	        fmt.Println(user.Authcode)
 	        return c.JSON(http.StatusOK,user)
       }
 
@@ -78,4 +81,18 @@ func create_user(db *gorm.DB) echo.HandlerFunc {
 }
 
 
-
+func update_user(db *gorm.DB) echo.HandlerFunc {
+    return func(c echo.Context) error {
+	            user_temp := echo.Map{}
+	            //user := models.User{}
+	            if err := c.Bind(&user_temp); err != nil {
+		            return err
+	            }
+	            id, _ := strconv.Atoi(c.Param("id"))
+	            var user models.User
+	            db.First(&user,id)
+	            user.Lname = user_temp["lname"].(string)
+	            db.Save(&user)
+	        return c.JSON(http.StatusOK, user)
+    }
+}
