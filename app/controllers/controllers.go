@@ -161,7 +161,6 @@ func get_blogger(db *gorm.DB) echo.HandlerFunc {
 
 }
 
-
 func update_blogger(db *gorm.DB) echo.HandlerFunc {
     return func(c echo.Context) error {
                 id, _ := strconv.Atoi(c.Param("id"))
@@ -182,10 +181,6 @@ func update_blogger(db *gorm.DB) echo.HandlerFunc {
 	        return c.JSON(http.StatusOK,blogger)
     }
 }
-
-
-
-
 
 
 
