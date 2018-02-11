@@ -79,7 +79,9 @@ func get_user(db *gorm.DB) echo.HandlerFunc {
             if db.First(&user,id).RecordNotFound(){
                 return c.JSON(http.StatusOK,"No Record Found")    
             }
-	        fmt.Println(user.Authcode)
+	        if user.Email==""{
+	            c.Logger().Print("Email does not exist")
+	        }
 	        return c.JSON(http.StatusOK,user)
       }
 
@@ -175,6 +177,8 @@ func update_blogger(db *gorm.DB) echo.HandlerFunc {
                 }
                 //fmt.Println(reflect.TypeOf(form.Value["no_of_posts"][0]))
 	            blogger.Posts,_  = strconv.Atoi(form.Value["no_of_posts"][0])
+	            blogger.PassCode,_ = strconv.Atoi(form.Value["pass_code"][0])
+	            //fmt.Println(blogger.PassCode) 
 	            db.Save(&blogger)
 	            //reading a file in form
 	            fmt.Println(form.File["img"])

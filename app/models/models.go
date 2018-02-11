@@ -40,7 +40,7 @@ type Blogger struct {
     User         User      `gorm:"foreignkey:UserId;association_foreignkey:Id"`
     UserId       int       `json:"user_id"`
     ShortBio     string    `json:"short_bio"`
-    PassCode     string    `json:"pass_code"`
+    PassCode     int    `json:"pass_code"`
     Status       int       `json:"status"`
     Posts        int       `json:"posts"`
 }
