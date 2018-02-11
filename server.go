@@ -13,6 +13,9 @@ func main() {
     //init controllers
     controllers.Init()
     
+    //registering static renderer
+    app.Server.Renderer = controllers.IndexPageRenderer
+    
     // run server
     app.Server.Logger.Fatal(app.Server.Start(":1323"))
 }
