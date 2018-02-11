@@ -29,6 +29,20 @@ type User struct {
     Phone        string    `json:"phone"`
     CreatedDt    time.Time `json:"created_dt"`
     Status       int       `json:"status"`
+    //Blogger      Blogger   `gorm:"foreignkey:UserId"`
+}
+
+
+
+
+type Blogger struct {
+    Id           int       `json:"id"`
+    User         User      `gorm:"foreignkey:UserId;association_foreignkey:Id"`
+    UserId       int       `json:"user_id"`
+    ShortBio     string    `json:"short_bio"`
+    PassCode     string    `json:"pass_code"`
+    Status       int       `json:"status"`
+    Posts        int       `json:"posts"`
 }
 
 

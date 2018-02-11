@@ -25,8 +25,14 @@ func Init() {
       //GET all records
       app.Server.GET("/users",get_users(DB))
       
+      //GET all Bloggers
+      app.Server.GET("/bloggers",get_bloggers(DB))
+      
       //GET record by id param
       app.Server.GET("/users/:id",get_user(DB))
+      
+      //GET blogger by id param
+      app.Server.GET("/bloggers/:id",get_blogger(DB))
       
       //POST Create a new user
       app.Server.POST("/users",create_user(DB))
@@ -39,11 +45,21 @@ func Init() {
       
 }
 
-
 func get_users(db *gorm.DB) echo.HandlerFunc {
 
     return func(c echo.Context) error {
             users :=  []models.User{}
+            if db.Find(&users).RecordNotFound(){
+                return c.JSON(http.StatusOK,"No Record Found") 
+            }
+	        return c.JSON(http.StatusOK,users)
+      }
+
+}
+func get_bloggers(db *gorm.DB) echo.HandlerFunc {
+
+    return func(c echo.Context) error {
+            users :=  []models.Blogger{}
             if db.Find(&users).RecordNotFound(){
                 return c.JSON(http.StatusOK,"No Record Found") 
             }
@@ -116,6 +132,30 @@ func delete_user(db *gorm.DB) echo.HandlerFunc {
 	            db.Delete(&user)
 	        return c.JSON(http.StatusOK,"Record Deleted")
     }
+}
+
+//Custom Response
+
+func get_blogger(db *gorm.DB) echo.HandlerFunc {
+
+    return func(c echo.Context) error {
+            id, _ := strconv.Atoi(c.Param("id"))
+            var blogger models.Blogger
+            var user    models.User
+            if db.First(&blogger,id).RecordNotFound(){
+                return c.JSON(http.StatusOK,"No Record Found")    
+            }
+            db.Model(&blogger).Related(&user)
+	        blogger_details := H{ "user_id": blogger.UserId,
+	                              "blogger_name": user.Fname +" "+ user.Lname, 
+	                              "short_bio": blogger.ShortBio,
+	                              "status" : blogger.Status,
+	                              "no_of_posts": blogger.Posts, 
+	                             }
+	        data := H{ "blogger_details" : blogger_details}
+	        return c.JSON(http.StatusOK,data)
+      }
+
 }
 
 
