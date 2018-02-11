@@ -9,7 +9,7 @@ import (
    	"uktrav_echo/app"
    	"github.com/jinzhu/gorm"
     "uktrav_echo/app/models"
-    
+    //"reflect"
 )
 
 type H map[string]interface{}
@@ -39,6 +39,9 @@ func Init() {
       
       //PUT Update a user
       app.Server.PUT("/users/:id",update_user(DB))
+      
+      //PUT Update a blogger 
+      app.Server.PUT("/bloggers/:id",update_blogger(DB))
       
       //Delete delete a user
       app.Server.DELETE("/users/:id",delete_user(DB))
@@ -157,6 +160,32 @@ func get_blogger(db *gorm.DB) echo.HandlerFunc {
       }
 
 }
+
+
+func update_blogger(db *gorm.DB) echo.HandlerFunc {
+    return func(c echo.Context) error {
+                id, _ := strconv.Atoi(c.Param("id"))
+	            var blogger models.Blogger
+	            if db.First(&blogger,id).RecordNotFound(){
+                    return c.JSON(http.StatusOK,"No Record Found")    
+                }
+	            form, err := c.MultipartForm()
+                if err != nil {
+                    c.Logger().Print(err.Error())
+                    return err
+                }
+                //fmt.Println(reflect.TypeOf(form.Value["no_of_posts"][0]))
+	            blogger.Posts,_  = strconv.Atoi(form.Value["no_of_posts"][0])
+	            db.Save(&blogger)
+	            //reading a file in form
+	            fmt.Println(form.File["img"])
+	        return c.JSON(http.StatusOK,blogger)
+    }
+}
+
+
+
+
 
 
 
