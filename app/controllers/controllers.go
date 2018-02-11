@@ -2,6 +2,7 @@ package controllers
 
 import (
     "fmt"
+    "io"
     "net/http"
     "strconv"
    _"github.com/jinzhu/gorm/dialects/mysql"
@@ -10,7 +11,20 @@ import (
    	"github.com/jinzhu/gorm"
     "uktrav_echo/app/models"
     //"reflect"
+    "html/template"
 )
+
+
+type Template struct {
+	templates *template.Template
+}
+
+
+func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+	return t.templates.ExecuteTemplate(w, name, data)
+}
+
+var IndexPageRenderer *Template
 
 type H map[string]interface{}
 
@@ -19,9 +33,18 @@ func Init() {
       DB, err := gorm.Open("mysql", "smartworks:smartworks@/uktrav?charset=utf8&parseTime=True")
 	  if err!=nil {
             fmt.Println("DB not Connected")       
-          }   
-      //Routes
+          }
       
+      //static files renderer
+      IndexPageRenderer = &Template{
+		templates: template.Must(template.ParseGlob("templates/*.html")),
+      }
+   
+       
+      //app.Server.File("/img/woods.jpg","static/img/woods.jpg")
+   
+      //Routes
+      app.Server.GET("/", get_index_page(DB))
       //GET all records
       app.Server.GET("/users",get_users(DB))
       
@@ -79,7 +102,9 @@ func get_user(db *gorm.DB) echo.HandlerFunc {
             if db.First(&user,id).RecordNotFound(){
                 return c.JSON(http.StatusOK,"No Record Found")    
             }
-	        fmt.Println(user.Authcode)
+	        if user.Email==""{
+	            c.Logger().Print("Email does not exist")
+	        }
 	        return c.JSON(http.StatusOK,user)
       }
 
@@ -175,12 +200,52 @@ func update_blogger(db *gorm.DB) echo.HandlerFunc {
                 }
                 //fmt.Println(reflect.TypeOf(form.Value["no_of_posts"][0]))
 	            blogger.Posts,_  = strconv.Atoi(form.Value["no_of_posts"][0])
+	            blogger.PassCode,_ = strconv.Atoi(form.Value["pass_code"][0])
+	            //fmt.Println(blogger.PassCode) 
 	            db.Save(&blogger)
 	            //reading a file in form
 	            fmt.Println(form.File["img"])
 	        return c.JSON(http.StatusOK,blogger)
     }
 }
+
+
+func update_blogger(db *gorm.DB) echo.HandlerFunc {
+    return func(c echo.Context) error {
+                id, _ := strconv.Atoi(c.Param("id"))
+	            var blogger models.Blogger
+	            if db.First(&blogger,id).RecordNotFound(){
+                    return c.JSON(http.StatusOK,"No Record Found")    
+                }
+	            form, err := c.MultipartForm()
+                if err != nil {
+                    c.Logger().Print(err.Error())
+                    return err
+                }
+                //fmt.Println(reflect.TypeOf(form.Value["no_of_posts"][0]))
+	            blogger.Posts,_  = strconv.Atoi(form.Value["no_of_posts"][0])
+	            db.Save(&blogger)
+	            //reading a file in form
+	            fmt.Println(form.File["img"])
+	        return c.JSON(http.StatusOK,blogger)
+    }
+}
+
+
+func get_index_page(db *gorm.DB) echo.HandlerFunc {
+    return func(c echo.Context) error {
+            var user models.User
+	        db.First(&user,1)
+	        user_details := H{"name": user.Fname +" "+ user.Lname,
+	                        }
+	      
+	        return c.Render(http.StatusOK, "index.html",user_details)
+    }
+}
+
+
+
+
 
 
 

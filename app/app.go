@@ -13,6 +13,7 @@ func Init() {
 	// Middleware
 	Server.Use(middleware.Logger())
 	Server.Use(middleware.Recover())
+	
 
 	//CORS
 	Server.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -25,5 +26,5 @@ func Init() {
       return c.String(http.StatusOK, "OK")
     })*/ 
 	//static file serviing
-	//Server.Static("/static", "assets")
+	Server.Static("/", "static")
 }
