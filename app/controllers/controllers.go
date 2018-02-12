@@ -186,29 +186,6 @@ func get_blogger(db *gorm.DB) echo.HandlerFunc {
 
 }
 
-func update_blogger(db *gorm.DB) echo.HandlerFunc {
-    return func(c echo.Context) error {
-                id, _ := strconv.Atoi(c.Param("id"))
-	            var blogger models.Blogger
-	            if db.First(&blogger,id).RecordNotFound(){
-                    return c.JSON(http.StatusOK,"No Record Found")    
-                }
-	            form, err := c.MultipartForm()
-                if err != nil {
-                    c.Logger().Print(err.Error())
-                    return err
-                }
-                //fmt.Println(reflect.TypeOf(form.Value["no_of_posts"][0]))
-	            blogger.Posts,_  = strconv.Atoi(form.Value["no_of_posts"][0])
-	            blogger.PassCode,_ = strconv.Atoi(form.Value["pass_code"][0])
-	            //fmt.Println(blogger.PassCode) 
-	            db.Save(&blogger)
-	            //reading a file in form
-	            fmt.Println(form.File["img"])
-	        return c.JSON(http.StatusOK,blogger)
-    }
-}
-
 
 func update_blogger(db *gorm.DB) echo.HandlerFunc {
     return func(c echo.Context) error {
