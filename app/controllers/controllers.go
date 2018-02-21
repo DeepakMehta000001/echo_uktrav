@@ -201,9 +201,15 @@ func update_blogger(db *gorm.DB) echo.HandlerFunc {
                 }
                 //fmt.Println(reflect.TypeOf(form.Value["no_of_posts"][0]))
 	            blogger.Posts,_  = strconv.Atoi(form.Value["no_of_posts"][0])
-	            db.Save(&blogger)
+	            if db.Save(&blogger).Error == nil {
+	                fmt.Println("update successful")
+	            }
+	            
 	            //reading a file in form
 	            fmt.Println(form.File["img"])
+	            for _,file := range(form.File["img"]){
+	                fmt.Println(file.Filename)
+	            }
 	        return c.JSON(http.StatusOK,blogger)
     }
 }
